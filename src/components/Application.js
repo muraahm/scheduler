@@ -3,7 +3,7 @@ import axios from "axios";
 import "components/Application.scss";
 import Appointment from "components/Appointment";
 import DayList from "./DayList"
-import { getAppointmentsForDay, getInterview } from "../helpers/selectors";
+import { getAppointmentsForDay, getInterview, getInterviewersForDay } from "../helpers/selectors";
 
 
 export default function Application(props) {
@@ -18,12 +18,14 @@ export default function Application(props) {
   const appointments = getAppointmentsForDay(state, state.day)
   const appointmentsList = appointments.map((appointment) => {
     const interview = getInterview(state, appointment.interview);
+    const interviewersForDay = getInterviewersForDay(state, state.day)
     return (
       <Appointment
         key={appointment.id}
         id={appointment.id}
         time={appointment.time}
         interview={interview}
+        interviewersForDay={interviewersForDay}
       />)
   });
   useEffect(
@@ -39,7 +41,6 @@ export default function Application(props) {
         .catch(function (error) {
         });
     }, []);
-    // console.log(state.interviewers)
   return (
     <main className="layout">
       <section className="sidebar">
