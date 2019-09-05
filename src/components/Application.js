@@ -30,7 +30,7 @@ export default function Application(props) {
     return axios.put('/api/appointments/' + id, { interview })
       .then(response => {
         setState({ ...state, appointments });
-      });
+      })
   }
 
   function editInterview(id, interview) {
