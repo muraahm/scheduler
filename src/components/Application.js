@@ -13,12 +13,24 @@ export default function Application(props) {
     appointments: {},
     interviewers: {}
   });
-  const setDay = day => setState({ ...state, day });
+  function bookInterview(id, interview) {
+    console.log(id, interview);
+  }
 
+  function save(name, interviewer) {
+    const interview = {
+      student: name,
+      interviewer
+    };
+    bookInterview(interview);
+  }
+
+  const setDay = day => setState({ ...state, day });
   const appointments = getAppointmentsForDay(state, state.day)
   const appointmentsList = appointments.map((appointment) => {
     const interview = getInterview(state, appointment.interview);
     const interviewersForDay = getInterviewersForDay(state, state.day)
+
     return (
       <Appointment
         key={appointment.id}
@@ -26,6 +38,8 @@ export default function Application(props) {
         time={appointment.time}
         interview={interview}
         interviewersForDay={interviewersForDay}
+        bookInterview = {bookInterview}
+        onSave={save}
       />)
   });
   useEffect(
