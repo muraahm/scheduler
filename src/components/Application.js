@@ -13,17 +13,31 @@ export default function Application(props) {
     appointments: {},
     interviewers: {}
   });
+
   function bookInterview(id, interview) {
-    console.log(id, interview);
+    const appointment = {
+      ...state.appointments[id],
+      interview: { ...interview }
+    };
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+    setState({
+      ...state,
+      appointments
+    });
+    return axios.put('/api/appointments/' + id, { interview })
+    .then(response => {
+      setState({ ...state, appointments });
+    });
+    // console.log(id, interview);
   }
 
-  function save(name, interviewer) {
-    const interview = {
-      student: name,
-      interviewer
-    };
-    bookInterview(interview);
-  }
+
+
+
+
 
   const setDay = day => setState({ ...state, day });
   const appointments = getAppointmentsForDay(state, state.day)
@@ -38,8 +52,7 @@ export default function Application(props) {
         time={appointment.time}
         interview={interview}
         interviewersForDay={interviewersForDay}
-        bookInterview = {bookInterview}
-        onSave={save}
+        bookInterview={bookInterview}
       />)
   });
   useEffect(
