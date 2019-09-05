@@ -33,6 +33,25 @@ export default function Application(props) {
       });
   }
 
+  function editInterview(id, interview) {
+    const appointment = {
+      ...state.appointments[id],
+      interview: { ...interview }
+    };
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+    setState({
+      ...state,
+      appointments
+    });
+    return axios.put('/api/appointments/' + id, { interview })
+      .then(response => {
+        setState({ ...state, appointments });
+      });
+  }
+
   function cancelInterview(id, interview) {
 
     const appointment = {
@@ -76,6 +95,7 @@ export default function Application(props) {
         interviewersForDay={interviewersForDay}
         bookInterview={bookInterview}
         cancelInterview={cancelInterview}
+        editInterview={editInterview}
       />)
   });
   useEffect(
