@@ -49,15 +49,19 @@ export default function Appointment(props) {
       .catch(error => transition(ERROR_DELETE, true));
   }
 
-  function editInterview(interviewer) {
-    transition(FORM)
+  function edit() {
+    transition(EDITING)
+
+  }
+  function editInterview(name, interviewer) {
+    transition(SAVING)
     const interview = {
-      student: props.name,
+      student: name,
       interviewer
     };
 
     props.editInterview(props.id, interview)
-      .then(() => transition(SAVING));
+      .then(() => transition(SHOW));
   }
 
 
@@ -71,7 +75,7 @@ export default function Appointment(props) {
           student={props.interview.student}
           interviewer={props.interview.interviewer}
           onDelete={() => confirm()}
-          onEdit={() => editInterview()}
+          onEdit={() => edit()}
         />
       )}
 
@@ -92,8 +96,9 @@ export default function Appointment(props) {
 
       {mode === EDITING &&
         <Form
+          name={props.interview.student}
           interviewers={props.interviewersForDay}
-          onSave={save}
+          onSave={editInterview}
           onCancel={() => back()} />
       }
 

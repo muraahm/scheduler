@@ -13,7 +13,24 @@ function reducer(state, action) {
     case SET_APPLICATION_DATA:
       return { ...state, ...action.value }
     case SET_INTERVIEW: {
-      return { ...state, appointments: action.value }
+      const newDays = state.days.map((day) => {
+        for (let appointmentInDay of day.appointments) {
+          let newSpots = day.spots;
+          if (appointmentInDay === action.id) {
+            const step = {
+              'delete': 1,
+              'create': -1
+            }[action.action]
+            console.log("STEEEEEEP",  step)
+            newSpots = newSpots + (step || 0)
+          }
+          day['spots'] = newSpots;
+        }
+        return day;
+      })
+      // console.log(newDays);
+
+      return { ...state, appointments: action.value, days: newDays }
     }
     default:
       throw new Error(
@@ -54,6 +71,7 @@ export function useApplicationData() {
     }, []);
 
   function bookInterview(id, interview) {
+    console.log("IM BOOKED")
     const appointment = {
       ...state.appointments[id],
       interview: { ...interview }
@@ -64,13 +82,14 @@ export function useApplicationData() {
     };
     return axios.put('/api/appointments/' + id, { interview })
       .then(response => {
-        dispatch({ type: SET_INTERVIEW, value: appointments });
-        console.log(appointments)
+        dispatch({ type: SET_INTERVIEW, value: appointments, id: id, action: 'create' });
+        // console.log(appointments)
       })
   }
   const setDay = day => dispatch({ type: SET_DAY, value: day });
 
   function editInterview(id, interview) {
+    console.log("IM CALLED")
     const appointment = {
       ...state.appointments[id],
       interview: { ...interview }
@@ -81,7 +100,7 @@ export function useApplicationData() {
     };
     return axios.put('/api/appointments/' + id, { interview })
       .then(response => {
-        dispatch({ type: SET_INTERVIEW, value: appointments });
+        dispatch({ type: SET_INTERVIEW, value: appointments, id: id });
       });
   }
 
@@ -98,7 +117,7 @@ export function useApplicationData() {
 
     return axios.delete('/api/appointments/' + id, { interview })
       .then(response => {
-        dispatch({ type: SET_INTERVIEW, value: appointments });
+        dispatch({ type: SET_INTERVIEW, value: appointments, id: id, action: 'delete' });
       });
 
   }
