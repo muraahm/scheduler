@@ -1,14 +1,36 @@
-import { useState, useEffect } from "react";
+import { useEffect, useReducer } from "react";
 import axios from "axios";
 
+
+const SET_DAY = "SET_DAY";
+const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
+const SET_INTERVIEW = "SET_INTERVIEW";
+
+function reducer(state, action) {
+  switch (action.type) {
+    case SET_DAY:
+      return { ...state, day: action.value }
+    case SET_APPLICATION_DATA:
+      return { ...state, ...action.value }
+    case SET_INTERVIEW: {
+      return { ...state, appointments: action.value }
+    }
+    default:
+      throw new Error(
+        `Tried to reduce with unsupported action type: ${action.type}`
+      );
+  }
+}
+
 export function useApplicationData() {
-  const setDay = day => setState({ ...state, day });
-  const [state, setState] = useState({
+
+  const [state, dispatch] = useReducer(reducer, {
     day: "Monday",
     days: [],
     appointments: {},
     interviewers: {}
   });
+
 
   useEffect(
     () => {
@@ -18,7 +40,14 @@ export function useApplicationData() {
         axios.get('/api/interviewers')
       ])
         .then((all) => {
-          setState(prev => ({ ...prev, days: all[0].data, appointments: all[1].data, interviewers: all[2].data }));
+          dispatch({
+            type: SET_APPLICATION_DATA,
+            value: {
+              days: all[0].data,
+              appointments: all[1].data,
+              interviewers: all[2].data
+            }
+          });
         })
         .catch(function (error) {
         });
@@ -33,15 +62,13 @@ export function useApplicationData() {
       ...state.appointments,
       [id]: appointment
     };
-    setState({
-      ...state,
-      appointments
-    });
     return axios.put('/api/appointments/' + id, { interview })
       .then(response => {
-        setState({ ...state, appointments });
+        dispatch({ type: SET_INTERVIEW, value: appointments });
+        console.log(appointments)
       })
   }
+  const setDay = day => dispatch({ type: SET_DAY, value: day });
 
   function editInterview(id, interview) {
     const appointment = {
@@ -52,13 +79,9 @@ export function useApplicationData() {
       ...state.appointments,
       [id]: appointment
     };
-    setState({
-      ...state,
-      appointments
-    });
     return axios.put('/api/appointments/' + id, { interview })
       .then(response => {
-        setState({ ...state, appointments });
+        dispatch({ type: SET_INTERVIEW, value: appointments });
       });
   }
 
@@ -73,13 +96,9 @@ export function useApplicationData() {
       [id]: appointment
     };
 
-    setState({
-      ...state,
-      appointments
-    });
     return axios.delete('/api/appointments/' + id, { interview })
       .then(response => {
-        setState({ ...state, appointments });
+        dispatch({ type: SET_INTERVIEW, value: appointments });
       });
 
   }

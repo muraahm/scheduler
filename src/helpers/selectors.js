@@ -10,8 +10,6 @@ function getAppointmentsForDay(state, day) {
 
 
 function getInterview(state, interview) {
-  // console.log(state.appointments["2"].interview)
-  // console.log(interview.interviewers)
   if (!interview) {
     return null
   }
@@ -28,9 +26,7 @@ function getInterviewersForDay(state, day) {
   if (state.days.length === 0 || selectedDay === undefined) {
     return results
   }
-  // console.log(selectedDay);
   const returnedArray = selectedDay.interviewers.map(id => state.interviewers[id])
-  // console.log(returnedArray)
   return returnedArray;
 }
 
