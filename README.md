@@ -19,7 +19,6 @@ A React application that allows users to book and cancel interviews. Data is per
 
 ## Dependencies
 
-- Node.js
 - Axios
 - Classnames
 - Normalize.css
