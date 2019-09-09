@@ -13,6 +13,7 @@ function reducer(state, action) {
     case SET_APPLICATION_DATA:
       return { ...state, ...action.value }
     case SET_INTERVIEW: {
+      const newAppointment = state["appointments"];
       const newDays = state.days.map((day) => {
         for (let appointmentInDay of day.appointments) {
           let newSpots = day.spots;
@@ -21,16 +22,15 @@ function reducer(state, action) {
               'delete': 1,
               'create': -1
             }[action.action]
-            console.log("STEEEEEEP",  step)
             newSpots = newSpots + (step || 0)
           }
           day['spots'] = newSpots;
         }
         return day;
       })
-      // console.log(newDays);
+      newAppointment[action.id]["interview"] = action.interview;
 
-      return { ...state, appointments: action.value, days: newDays }
+      return { ...state, appointments: newAppointment, days: newDays }
     }
     default:
       throw new Error(
@@ -47,6 +47,28 @@ export function useApplicationData() {
     appointments: {},
     interviewers: {}
   });
+
+
+  useEffect(() => {
+    const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+    socket.onopen = () => {
+      socket.send('ping');
+    };
+    socket.onmessage = (message) => {
+      const eventData = JSON.parse(message.data);
+      if (eventData.type === SET_INTERVIEW) {
+        if(eventData.interview !== null) {
+          const action = 'create';
+          dispatch({ type: SET_INTERVIEW, id: eventData.id, interview: eventData.interview, action: action });
+        }
+        if(eventData.interview === null) {
+          const action = 'delete';
+          dispatch({ type: SET_INTERVIEW, id: eventData.id, interview: eventData.interview, action: action });
+        }
+        
+      }
+    };
+  }, []);
 
 
   useEffect(
@@ -71,7 +93,6 @@ export function useApplicationData() {
     }, []);
 
   function bookInterview(id, interview) {
-    console.log("IM BOOKED")
     const appointment = {
       ...state.appointments[id],
       interview: { ...interview }
@@ -82,14 +103,12 @@ export function useApplicationData() {
     };
     return axios.put('/api/appointments/' + id, { interview })
       .then(response => {
-        dispatch({ type: SET_INTERVIEW, value: appointments, id: id, action: 'create' });
-        // console.log(appointments)
+        dispatch({ type: SET_INTERVIEW, value: appointments, id: id, interview });
       })
   }
   const setDay = day => dispatch({ type: SET_DAY, value: day });
 
   function editInterview(id, interview) {
-    console.log("IM CALLED")
     const appointment = {
       ...state.appointments[id],
       interview: { ...interview }
@@ -100,7 +119,7 @@ export function useApplicationData() {
     };
     return axios.put('/api/appointments/' + id, { interview })
       .then(response => {
-        dispatch({ type: SET_INTERVIEW, value: appointments, id: id });
+        dispatch({ type: SET_INTERVIEW, value: appointments, id: id, interview });
       });
   }
 
@@ -117,7 +136,7 @@ export function useApplicationData() {
 
     return axios.delete('/api/appointments/' + id, { interview })
       .then(response => {
-        dispatch({ type: SET_INTERVIEW, value: appointments, id: id, action: 'delete' });
+        dispatch({ type: SET_INTERVIEW, value: appointments, id: id });
       });
 
   }
