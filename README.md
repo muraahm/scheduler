@@ -3,6 +3,7 @@
 
 ## Description
 A React application that allows users to book and cancel interviews. Data is persisted by the API server using a PostgreSQL database, jest tests are used through the development of the project.
+The client application communicates with a WebSocket server, when a user books or cancels an interview, all connected users see the update in their browser.
 
 
 ## Final Product
