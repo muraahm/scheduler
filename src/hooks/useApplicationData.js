@@ -1,43 +1,11 @@
 import { useEffect, useReducer } from "react";
 import axios from "axios";
+import  {reducer,
+  SET_DAY,
+  SET_APPLICATION_DATA,
+  SET_INTERVIEW
+} from "reducers/application";
 
-
-const SET_DAY = "SET_DAY";
-const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
-const SET_INTERVIEW = "SET_INTERVIEW";
-
-function reducer(state, action) {
-  switch (action.type) {
-    case SET_DAY:
-      return { ...state, day: action.value }
-    case SET_APPLICATION_DATA:
-      return { ...state, ...action.value }
-    case SET_INTERVIEW: {
-      const newAppointment = state["appointments"];
-      const newDays = state.days.map((day) => {
-        for (let appointmentInDay of day.appointments) {
-          let newSpots = day.spots;
-          if (appointmentInDay === action.id) {
-            const step = {
-              'delete': 1,
-              'create': -1
-            }[action.action]
-            newSpots = newSpots + (step || 0)
-          }
-          day['spots'] = newSpots;
-        }
-        return day;
-      })
-      newAppointment[action.id]["interview"] = action.interview;
-
-      return { ...state, appointments: newAppointment, days: newDays }
-    }
-    default:
-      throw new Error(
-        `Tried to reduce with unsupported action type: ${action.type}`
-      );
-  }
-}
 
 export function useApplicationData() {
 
@@ -58,12 +26,10 @@ export function useApplicationData() {
       const eventData = JSON.parse(message.data);
       if (eventData.type === SET_INTERVIEW) {
         if(eventData.interview !== null) {
-          const action = 'create';
-          dispatch({ type: SET_INTERVIEW, id: eventData.id, interview: eventData.interview, action: action });
+          dispatch({ type: SET_INTERVIEW, id: eventData.id, interview: eventData.interview });
         }
         if(eventData.interview === null) {
-          const action = 'delete';
-          dispatch({ type: SET_INTERVIEW, id: eventData.id, interview: eventData.interview, action: action });
+          dispatch({ type: SET_INTERVIEW, id: eventData.id, interview: eventData.interview });
         }
         
       }
@@ -105,6 +71,8 @@ export function useApplicationData() {
       .then(response => {
         dispatch({ type: SET_INTERVIEW, value: appointments, id: id, interview });
       })
+      // .catch(function (error) {
+      // });
   }
   const setDay = day => dispatch({ type: SET_DAY, value: day });
 
@@ -120,7 +88,9 @@ export function useApplicationData() {
     return axios.put('/api/appointments/' + id, { interview })
       .then(response => {
         dispatch({ type: SET_INTERVIEW, value: appointments, id: id, interview });
-      });
+      })
+      // .catch(function (error) {
+      // });
   }
 
   function cancelInterview(id, interview) {
@@ -137,7 +107,9 @@ export function useApplicationData() {
     return axios.delete('/api/appointments/' + id, { interview })
       .then(response => {
         dispatch({ type: SET_INTERVIEW, value: appointments, id: id });
-      });
+      })
+      // .catch(function (error) {
+      // });
 
   }
 
