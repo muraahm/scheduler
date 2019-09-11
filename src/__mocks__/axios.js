@@ -54,12 +54,11 @@ const fixtures = {
 };
 
 export default {
-  // defaults: { baseURL: "" },
-  
-  put: jest.fn(url => { 
+
+  put: jest.fn(url => {
     return Promise.resolve({
-    status: 204,
-    statusText: "No Content" 
+      status: 204,
+      statusText: "No Content"
     });
   }),
 

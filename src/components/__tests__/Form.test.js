@@ -1,7 +1,5 @@
 import React from "react";
-
 import { render, cleanup, fireEvent } from "@testing-library/react";
-
 import Form from "components/Appointment/form";
 
 afterEach(cleanup);
@@ -14,8 +12,6 @@ describe("Form", () => {
       avatar: "https://i.imgur.com/LpaY82x.png"
     }
   ];
-
-
 
   it("renders without student name if not provided", () => {
     const { getByPlaceholderText } = render(

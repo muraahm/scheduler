@@ -1,6 +1,7 @@
 import { useEffect, useReducer } from "react";
 import axios from "axios";
-import  {reducer,
+import {
+  reducer,
   SET_DAY,
   SET_APPLICATION_DATA,
   SET_INTERVIEW
@@ -25,13 +26,13 @@ export function useApplicationData() {
     socket.onmessage = (message) => {
       const eventData = JSON.parse(message.data);
       if (eventData.type === SET_INTERVIEW) {
-        if(eventData.interview !== null) {
+        if (eventData.interview !== null) {
           dispatch({ type: SET_INTERVIEW, id: eventData.id, interview: eventData.interview });
         }
-        if(eventData.interview === null) {
+        if (eventData.interview === null) {
           dispatch({ type: SET_INTERVIEW, id: eventData.id, interview: eventData.interview });
         }
-        
+
       }
     };
   }, []);
@@ -71,8 +72,6 @@ export function useApplicationData() {
       .then(response => {
         dispatch({ type: SET_INTERVIEW, value: appointments, id: id, interview });
       })
-      // .catch(function (error) {
-      // });
   }
   const setDay = day => dispatch({ type: SET_DAY, value: day });
 
@@ -89,8 +88,6 @@ export function useApplicationData() {
       .then(response => {
         dispatch({ type: SET_INTERVIEW, value: appointments, id: id, interview });
       })
-      // .catch(function (error) {
-      // });
   }
 
   function cancelInterview(id, interview) {
@@ -108,8 +105,6 @@ export function useApplicationData() {
       .then(response => {
         dispatch({ type: SET_INTERVIEW, value: appointments, id: id });
       })
-      // .catch(function (error) {
-      // });
 
   }
 

@@ -8,15 +8,14 @@ function getAppointmentsForDay(state, day) {
   return returnedArray;
 }
 
-
 function getInterview(state, interview) {
   if (!interview) {
     return null
   }
   const intervirewersObj = Object.values(state.interviewers)
   const selectedInterview = intervirewersObj.find(interviewer => interviewer.id === interview.interviewer);
-  const result = {student : interview.student, interviewer: selectedInterview}
-  
+  const result = { student: interview.student, interviewer: selectedInterview }
+
   return result;
 }
 

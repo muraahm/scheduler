@@ -12,9 +12,6 @@ export default function Form(props) {
   const cancel = function () {
     props.onCancel(reset());
   }
-  // const save = function () {
-  //   props.onSave(name, interviewer);
-  // }
 
   const [error, setError] = useState("");
   

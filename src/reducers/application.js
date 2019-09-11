@@ -31,7 +31,6 @@ function reducer(state, action) {
         }
         return day
       })
-      // newAppointments[action.id]["interview"] = action.interview;
 
       return { ...state, appointments: appointments, days: daysArray }
     }
@@ -42,4 +41,4 @@ function reducer(state, action) {
   }
 }
 
- export { reducer, SET_DAY, SET_APPLICATION_DATA, SET_INTERVIEW };
+export { reducer, SET_DAY, SET_APPLICATION_DATA, SET_INTERVIEW };
