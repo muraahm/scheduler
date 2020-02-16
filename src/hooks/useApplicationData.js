@@ -1,4 +1,5 @@
 import { useEffect, useReducer } from "react";
+import config from '../config'
 import axios from "axios";
 import {
   reducer,
@@ -41,9 +42,9 @@ export function useApplicationData() {
   useEffect(
     () => {
       Promise.all([
-        axios.get('/api/days'),
-        axios.get('/api/appointments'),
-        axios.get('/api/interviewers')
+        axios.get(`${config.API_PATH}/api/days`),
+        axios.get(`${config.API_PATH}/api/appointments`),
+        axios.get(`${config.API_PATH}/api/interviewers`)
       ])
         .then((all) => {
           dispatch({
@@ -68,7 +69,7 @@ export function useApplicationData() {
       ...state.appointments,
       [id]: appointment
     };
-    return axios.put('/api/appointments/' + id, { interview })
+    return axios.put(`${config.API_PATH}/api/appointments/` + id, { interview })
       .then(response => {
         dispatch({ type: SET_INTERVIEW, value: appointments, id: id, interview });
       })
@@ -84,7 +85,7 @@ export function useApplicationData() {
       ...state.appointments,
       [id]: appointment
     };
-    return axios.put('/api/appointments/' + id, { interview })
+    return axios.put(`${config.API_PATH}/api/appointments/` + id, { interview })
       .then(response => {
         dispatch({ type: SET_INTERVIEW, value: appointments, id: id, interview });
       })
@@ -101,7 +102,7 @@ export function useApplicationData() {
       [id]: appointment
     };
 
-    return axios.delete('/api/appointments/' + id, { interview })
+    return axios.delete(`${config.API_PATH}/api/appointments/` + id, { interview })
       .then(response => {
         dispatch({ type: SET_INTERVIEW, value: appointments, id: id });
       })
